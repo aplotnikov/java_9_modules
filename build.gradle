@@ -1,31 +1,70 @@
-plugins {
-    id 'java'
-    id 'groovy'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
 
-    id 'project-report'
-    id 'build-dashboard'
+    apply plugin: 'project-report'
+    apply plugin: 'build-dashboard'
 
-    id 'pmd'
-    id 'findbugs'
-    id 'checkstyle'
-    id 'codenarc'
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_1_9
+    targetCompatibility = JavaVersion.VERSION_1_9
+
+    jar {
+        baseName = 'java_9_modules'
+        group = 'io.github.aplotnikov'
+        version = '0.0.1-SNAPSHOT'
+    }
+
+    dependencies {
+        testCompile 'org.codehaus.groovy:groovy-all:2.4.13',
+            'org.spockframework:spock-core:1.1-groovy-2.4',
+            'com.github.stefanbirkner:system-rules:1.17.0'
+    }
 }
 
-apply from: 'config/static-code-analyze.gradle'
-
-repositories {
-    mavenCentral()
+subprojects {
+    afterEvaluate {
+        compileJava {
+            // in order to use automatic modules we have to use it
+            doFirst {
+                options.compilerArgs = [
+                    '--module-path', classpath.asPath,
+                ]
+                classpath = files()
+            }
+        }
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_9
-targetCompatibility = JavaVersion.VERSION_1_9
-
-jar {
-    baseName = 'java_9_modules'
-    group = 'io.github.aplotnikov'
-    version = '0.0.1-SNAPSHOT'
+project(':api') {
+    dependencies {
+        compile 'io.vavr:vavr:0.9.2'
+    }
 }
 
-dependencies {
+project(':first_implementation') {
+    dependencies {
+        compile project(':api')
+    }
+}
 
+project(':second_implementation') {
+    dependencies {
+        compile project(':api')
+    }
+}
+
+project(':core') {
+    dependencies {
+        compile project(':api')
+
+        runtimeOnly project(':first_implementation'),
+            project(':second_implementation')
+
+        testRuntimeOnly project(':first_implementation'),
+            project(':second_implementation')
+    }
 }
