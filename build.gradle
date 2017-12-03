@@ -63,8 +63,5 @@ project(':core') {
 
         runtimeOnly project(':first_implementation'),
             project(':second_implementation')
-
-        testRuntimeOnly project(':first_implementation'),
-            project(':second_implementation')
     }
 }
