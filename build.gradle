@@ -59,9 +59,8 @@ project(':second_implementation') {
 
 project(':core') {
     dependencies {
-        compile project(':api')
-
-        runtimeOnly project(':first_implementation'),
+        compile project(':api'),
+            project(':first_implementation'),
             project(':second_implementation')
     }
 }
