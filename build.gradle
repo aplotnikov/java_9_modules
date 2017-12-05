@@ -13,7 +13,6 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_9
 
     jar {
-        baseName = 'java_9_modules'
         group = 'io.github.aplotnikov'
         version = '0.0.1-SNAPSHOT'
     }
@@ -30,9 +29,8 @@ subprojects {
         compileJava {
             // in order to use automatic modules we have to use it
             doFirst {
-                options.compilerArgs = [
-                    '--module-path', classpath.asPath,
-                ]
+                println classpath.asPath
+                options.compilerArgs = ['--module-path', classpath.asPath]
                 classpath = files()
             }
         }
@@ -40,24 +38,40 @@ subprojects {
 }
 
 project(':api') {
+    jar {
+        baseName = 'api'
+    }
+
     dependencies {
         compile 'io.vavr:vavr:0.9.2'
     }
 }
 
 project(':first_implementation') {
+    jar {
+        baseName = 'first_implementation'
+    }
+
     dependencies {
         compile project(':api')
     }
 }
 
 project(':second_implementation') {
+    jar {
+        baseName = 'second_implementation'
+    }
+
     dependencies {
         compile project(':api')
     }
 }
 
 project(':core') {
+    jar {
+        baseName = 'core'
+    }
+
     dependencies {
         compile project(':api'),
             project(':first_implementation'),
